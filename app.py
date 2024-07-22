@@ -1,4 +1,4 @@
-# Routing and Variable rules
+# HTTP Methods
 
 from flask import Flask, request
 
@@ -16,9 +16,12 @@ def about():
 def show_user_profile(username):
     return f"User: {username}"
 
-@app.route('/post/<int:post_id>')
+@app.route('/post/<int:post_id>', methods=["POST", "GET"])
 def show_post(post_id):
-    return f'Post ID: {post_id}'
+    if request.method == "POST":
+        return f'Creating or updating post {post_id}'
+    else:
+        return f'Post ID: {post_id}'
 
 
 if __name__ == "__main__":
