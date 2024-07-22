@@ -1,47 +1,34 @@
-# Unique URLs / Redirection Behavior
+# Static Files
 
-from flask import Flask, url_for, redirect, request
+from flask import Flask, send_from_directory, render_template
 
 app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return 'Welcome to the Home Page!'
+    return '''
+    <html>
+        <head>
+            <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+        </head>
+        <body>
+            <h1>Welcome to the Home Page!</h1>
+            <button>Click</button>
+            <img src="/static/images/logo.png" alt="Logo">
+            <script src="/static/js/script.js"></script>
+        </body>
+    </html>
+    '''
 
-@app.route("/about/")
-def about():
-    return "This is the about page."
+# Using Static Files in Templates
+@app.route("/index")
+def index():
+    return render_template("index.html")
 
-@app.route("/contact")
-def contact():
-    return "This is the contact page."
-
-# Basic Redirection
-@app.route('/login')
-def login():
-    return 'This is the Login Page.'
-
-@app.route('/redirect-to-login')
-def redirect_to_login():
-    return redirect(url_for('login'))
-
-# Conditional Redirection
-@app.route("/profile")
-def profile():
-    logged_in = request.args.get("logged_in", 'false').lower() == "true"
-    if not logged_in:
-        return redirect(url_for('login'))
-    return 'This is the Profile Page.'
-
-# HTTP Status Codes
-@app.route('/permanent-redirect')
-def permanent_redirect():
-    return redirect(url_for('home'), code=301)
-
-@app.route("/user/<username>")
-def show_user_profile(username):
-    return f"User: {username}"
-
+# Custom Static File Route
+@app.route('/custom_static/<path:filename>')
+def custom_static(filename):
+    return send_from_directory('static/css', filename)
 
 if __name__ == "__main__":
     app.run(debug=True)
