@@ -1,44 +1,27 @@
 
 #* File Uploads
+from flask import Flask, redirect, render_template
 
-from flask import Flask, redirect, url_for, request,render_template
-from werkzeug.utils import secure_filename
-import os
 
 app = Flask(__name__)
 
-# Set the folder
-UPLOAD_FOLDER = "uploads"
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-
-# Set file size limit
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB
-
-# Allowed file extensions
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg'}
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.route('/')
+@app.route("/")
 def index():
-    return render_template('upload.html')
+    return "<h1>Welcome to the Home page.</h1>"
 
-@app.route("/upload", methods=["POST"])
-def upload_file():
-    if 'file' not in request.files:
-        return 'No file part'
-    
-    file = request.files['file']
+@app.route('/cause-404')
+def cause_404():
+    # This will cause a 404 error because the route does not exist
+    return redirect('/non_existent_page')
 
-    if file.filename == '':
-        return 'No selected file'
-    elif file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return f'File successfully uploaded: {filename}'
-    else:
-        return 'File type not allowed'
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"),404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template("500.html"),500
+
 
 if __name__ == "__main__":
     app.run(debug=True)
