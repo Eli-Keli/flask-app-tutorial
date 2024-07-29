@@ -1,31 +1,26 @@
 
 #* Sessions
-from flask import Flask, session
+from flask import Flask, flash, render_template, redirect, url_for
 
 app = Flask(__name__)
 app.secret_key = "mysecretkeyisflask" # Configure secrect key
 
 @app.route("/")
 def index():
-    return "<h1>Welcome to the sessions example</h1>"
+    return render_template("index.html")
 
-# Setting session data
-@app.route("/set-session")
-def set_session():
-    session["username"] = "Eli Keli"
-    return "<h1>Session data has been set!</h1>"
+#Flashing a message
+@app.route("/flash-message")
+def flash_message():
+    flash("This is a flashed message")
+    return redirect(url_for("index"))
 
-# Accessing session data
-@app.route("/get-session")
-def get_session():
-    username = session.get("username", "Guest")
-    return f"<h2>Welcome, {username}!</h2>"
-
-# Deleting session data
-@app.route("/delete-session")
-def delete_session():
-    session.pop("username", None)
-    return "<h1>Session data has been deleted!</h1>"
+# Flashing messages with category
+@app.route("/flash-category")
+def flash_category():
+    flash("This is an info message", "info")
+    flash("This is a warning message", "warning")
+    return redirect(url_for("index"))
 
 if __name__ == "__main__":
     app.run(debug=True)

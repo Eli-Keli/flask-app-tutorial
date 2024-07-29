@@ -1,11 +1,26 @@
 <!doctype html>
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Flask Flashing Example</title>
+    <style>
+        .warning {
+            color: red;
+        }
+        .info{
+            color: blue;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Home Page!</h1>
-    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <h1>Flashing</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 </body>
 </html>
