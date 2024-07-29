@@ -1,52 +1,31 @@
 
-#* APIs with JSON
-from flask import Flask, request, jsonify
-
+#* Sessions
+from flask import Flask, session
 
 app = Flask(__name__)
+app.secret_key = "mysecretkeyisflask" # Configure secrect key
 
+@app.route("/")
+def index():
+    return "<h1>Welcome to the sessions example</h1>"
 
-# Basic JSON Response
-@app.route("/api")
-def api_example():
-    data = {
-        "message": "Hello JSON",
-        "status": "success"
-    }
-    return jsonify(data)
+# Setting session data
+@app.route("/set-session")
+def set_session():
+    session["username"] = "Eli Keli"
+    return "<h1>Session data has been set!</h1>"
 
-# Returning JSON from a Dictionary
-@app.route('/api/direct')
-def api_direct():
-    return {
-        'message': 'Hello, JSON directly!',
-        'status': 'success'
-    }
+# Accessing session data
+@app.route("/get-session")
+def get_session():
+    username = session.get("username", "Guest")
+    return f"<h2>Welcome, {username}!</h2>"
 
-# Handling Query Parameters
-@app.route('/api/greet')
-def greet():
-    name = request.args.get('name', 'World')
-    return jsonify(message=f'Hello, {name}!')
-
-# Handling POST Requests
-@app.route('/api/data', methods=['POST'])
-def handle_data():
-    data = request.get_json()
-    if not data:
-        return jsonify({'error': 'No data provided'}), 400
-
-    # Process the data
-    processed_data = data.get('key', 'default value')
-    return jsonify({'processed_data': processed_data})
-
-# Error Handling in APIs
-@app.route('/api/error')
-def api_error():
-    try:
-        raise ValueError('An error occurred!')
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+# Deleting session data
+@app.route("/delete-session")
+def delete_session():
+    session.pop("username", None)
+    return "<h1>Session data has been deleted!</h1>"
 
 if __name__ == "__main__":
     app.run(debug=True)
